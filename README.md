@@ -1,1 +1,1 @@
-This repository is my investment base on tongdaxin and deep reinforce learning
+This repository is my investment tool base on tongdaxin and deep reinforce learning
