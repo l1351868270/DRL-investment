@@ -2,3 +2,7 @@
 /.vscode/*
 !/.vscode/extensions.json
 !/.vscode/settings_recommended.json
+
+drl_investment.egg-info/
+
+__pycache__/
