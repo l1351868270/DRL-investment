@@ -53,3 +53,6 @@ def unpack_data(file_path, begin_time: datetime=None, end_time: datetime=None):
 
         data.reverse()
         return data
+    
+
+class TDXData
