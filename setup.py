@@ -8,7 +8,7 @@ def main():
     setup(
         name=project_name,
         version='0.0.1',
-        install_requires=[],
+        install_requires=['pytest'],
     )
 
 
