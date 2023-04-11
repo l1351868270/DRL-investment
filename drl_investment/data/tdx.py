@@ -2,6 +2,10 @@
 from datetime import datetime
 import logging
 from struct import unpack
+import numpy as np
+import pandas as pd
+
+from drl_investment.data import DataBase
 
 
 LOG = logging.getLogger(__name__)
@@ -30,6 +34,7 @@ def unpack_data(file_path, begin_time: datetime=None, end_time: datetime=None):
         
         begin = buf_size - 32
         end = buf_size
+        d_index = []
         data = []
         LOG.debug(f'The total lines of the file {file_path} is {rec_count}')
         for i in range(rec_count):
@@ -46,13 +51,20 @@ def unpack_data(file_path, begin_time: datetime=None, end_time: datetime=None):
             if end_time is not None:
                 if date > end_time:
                     continue
-            data.append([date, str(a[1] / 100.0), str(a[2] / 100.0), str(a[3] / 100.0), \
-                        str(a[4] / 100.0), str(a[5]), str(a[6])])
+            d_index.append(date)
+            data.append([float(str(a[1] / 100.0)), float(str(a[2] / 100.0)), float(str(a[3] / 100.0)), \
+                        float(str(a[4] / 100.0)), float(str(a[5])), float(str(a[6]))])
             begin -= 32
             end -= 32
-
+        d_index.reverse()
         data.reverse()
-        return data
+        return pd.DataFrame(data, columns=['open','high','low', 'close', 'amount', 'volume'], index=d_index, dtype=np.float32)
     
 
-class TDXData
+class TDXData(DataBase):
+    def __init__(self, data: pd.DataFrame):
+        self._data = data
+    
+    def alpha101(self) -> pd.DataFrame:
+        ud = unpack_data(self._path, self._begin_time, self._end_time)
+        
