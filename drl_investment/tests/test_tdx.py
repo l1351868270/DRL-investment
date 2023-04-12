@@ -28,6 +28,13 @@ class TDXTest(unittest.TestCase):
     #     LOG.info(f'\ndf: \n{df}')
 
 
+class TDXEnvTest(unittest.TestCase):
+    def setUp(self) -> None:
+        return super().setUp()
+    
+    def test_render(self):
+        
+
 if __name__ == '__main__':
     import pytest
     import sys
