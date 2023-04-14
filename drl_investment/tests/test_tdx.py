@@ -26,13 +26,6 @@ class TDXTest(unittest.TestCase):
     #     d = unpack_data(self._file_path)
     #     df = raw_to_data_frame(d)
     #     LOG.info(f'\ndf: \n{df}')
-
-
-class TDXEnvTest(unittest.TestCase):
-    def setUp(self) -> None:
-        return super().setUp()
-    
-    def test_render(self):
         
 
 if __name__ == '__main__':
