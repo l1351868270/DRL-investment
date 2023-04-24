@@ -56,7 +56,6 @@ class TDXRawEnvTest(unittest.TestCase):
             'columns': self._data.columns.to_list(),
         }
         env = gym.make("drl_investment/TDXRaw-v0", config=config)
-        env = TDXRawEnv(config)
         observation, info = env.reset(seed=42)
         LOG.info(f'observation: {observation}, info: {info}')
         env.close()

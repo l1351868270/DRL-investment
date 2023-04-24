@@ -34,7 +34,8 @@ class TDXRawEnv(gym.Env):
 
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self._data.shape[1], ), dtype=np.float32)
 
-        self.action_space = spaces.Discrete(3, start=-1)
+        self.action_space = spaces.Discrete(3) # spaces.Discrete(3, start=-1) is not {-1, 0, 1}
+        
 
     def _get_obs(self):
         return self._data[self._index]
@@ -47,7 +48,8 @@ class TDXRawEnv(gym.Env):
 
         self._index = self._begin_index = self.np_random.integers(0, int(self._len*0.625))
 
-        self._position = self.np_random.integers(self._min_position, self._max_position)
+        # self._position = self.np_random.integers(self._min_position, self._max_position)
+        self._position = 1
 
         self._total_return = 0.0 # Total return until now
 
@@ -57,34 +59,36 @@ class TDXRawEnv(gym.Env):
         return observation, info
 
     def step(self, action):
-        terminated = self._index >= self._len
+        observation = self._get_obs()
+        info = self._get_info()
+    
+        terminated = self._index >= self._len-1
         if terminated:
-            return None, None, True, False, None
+            return observation, 0.0, True, True, info
         
         reward = 0
         # ignore n+1 limit
-        if self.position == 0:
+        if self._position == 0:
             reward = 0
-        elif self.position > 0:
+        elif self._position > 0:
             reward = 0 if self._index==0 else self._data[self._index][0]/self._data[self._index-1][0]-1
             reward *= self._position
-        elif self.position < 0:
+        elif self._position < 0:
             reward = 0 if self._index==0 else self._data[self._index][0]/self._data[self._index-1][0]-1
             reward *= self._position
         
-        observation = self._get_obs()
-        info = self._get_info()
-
         self._index += 1
-        self._position += action
+        self._position += action - 1
 
         # Total return less than -0.20, stop the game
         self._total_return += reward
+        # if self._index > 1000:
+        #     raise Exception(f'reward: {reward}, position: {self._position}, action: {action}, [self._index]: {self._index}')
         if self._total_return < -0.20:
+            LOG.error((f'+++++++++++++++++++++reward: {reward}, total_return: {self._total_return}, position: {self._position}, action: {action}, [self._index]: {self._index}'))
             reward = -1000.0
-            return observation, reward, True, False, info
-        
-        return observation, reward, terminated, False, info
+            return observation, reward, True, True, info
+        return observation, reward, terminated, terminated, info
 
     def render(self):
         pass
