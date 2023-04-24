@@ -1,9 +1,9 @@
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 import logging
-import pygame
 import numpy as np
 import pandas as pd
+# from gym.envs.registration import register
 
 from drl_investment.data.tdx import DataRaw
 
@@ -12,28 +12,27 @@ LOG = logging.getLogger(__name__)
 
 
 class TDXRawEnv(gym.Env):
+    '''
+    refer to: https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/
+    '''
     metadata = {'render_modes': ['human', 'rgb_array'], 'render_fps': 4}
 
-    def __init__(self, render_mode=None, data: np.array = None, columns: list[str] = None, max_position=0, min_position=0):
-        if data is None:
-            raise Exception(f'data must not be None')
-        if columns is None:
-            raise Exception(f'index must not be None')
+    def __init__(self, config: dict):
+        self._data: np.array = config['data']
+        self._columns: list[str] = config['columns']
+        self._max_position: int = config.get('max_position', 5)
+        self._min_position: int = config.get('min_position', 1)
         
         self._min_len = 100
-        self._len = data.shape[0]
+        self._len = self._data.shape[0]
         if self._len < self._min_len:
             raise Exception(f'data length must large than {self._min_len}')
         
-        assert data.shape[1] == len(columns)
+        assert self._data.shape[1] == len(self._columns)
 
         self._index: int = 0
-        self._data = data
-        self._columns = columns
-        self._max_position = max_position
-        self._min_position = min_position
 
-        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(data.shape[1], ), dtype=np.float32)
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self._data.shape[1], ), dtype=np.float32)
 
         self.action_space = spaces.Discrete(3, start=-1)
 
@@ -46,9 +45,11 @@ class TDXRawEnv(gym.Env):
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
 
-        self._index = self.np_random.integers(0, int(self._len*0.625))
+        self._index = self._begin_index = self.np_random.integers(0, int(self._len*0.625))
 
         self._position = self.np_random.integers(self._min_position, self._max_position)
+
+        self._total_return = 0.0 # Total return until now
 
         observation = self._get_obs()
         info = self._get_info()
@@ -59,7 +60,9 @@ class TDXRawEnv(gym.Env):
         terminated = self._index >= self._len
         if terminated:
             return None, None, True, False, None
+        
         reward = 0
+        # ignore n+1 limit
         if self.position == 0:
             reward = 0
         elif self.position > 0:
@@ -68,12 +71,19 @@ class TDXRawEnv(gym.Env):
         elif self.position < 0:
             reward = 0 if self._index==0 else self._data[self._index][0]/self._data[self._index-1][0]-1
             reward *= self._position
-
+        
         observation = self._get_obs()
         info = self._get_info()
 
         self._index += 1
         self._position += action
+
+        # Total return less than -0.20, stop the game
+        self._total_return += reward
+        if self._total_return < -0.20:
+            reward = -1000.0
+            return observation, reward, True, False, info
+        
         return observation, reward, terminated, False, info
 
     def render(self):
@@ -81,3 +91,9 @@ class TDXRawEnv(gym.Env):
 
     def close(self):
         pass
+
+
+# register(
+#     id="drl_investment/TDXRaw-v0",
+#     entry_point="drl_investment.envs.tdx_raw:TDXRawEnv",
+# )
