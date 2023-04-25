@@ -20,8 +20,9 @@ class TDXRawEnv(gym.Env):
     def __init__(self, config: dict):
         self._data: np.array = config['data']
         self._columns: list[str] = config['columns']
-        self._max_position: int = config.get('max_position', 5)
-        self._min_position: int = config.get('min_position', 1)
+        self._initial_position: int = config.get('initial_position', 1)
+        self._max_position: int = config.get('max_position', 10)
+        self._min_position: int = config.get('min_position', -10)
         
         self._min_len = 100
         self._len = self._data.shape[0]
@@ -46,10 +47,9 @@ class TDXRawEnv(gym.Env):
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
 
-        self._index = self._begin_index = self.np_random.integers(0, int(self._len*0.625))
+        self._index = self._begin_index = self.np_random.integers(0, 60)
 
-        # self._position = self.np_random.integers(self._min_position, self._max_position)
-        self._position = 1
+        self._position = self._initial_position
 
         self._total_return = 0.0 # Total return until now
 
@@ -66,7 +66,12 @@ class TDXRawEnv(gym.Env):
         if terminated:
             return observation, 0.0, True, True, info
         
-        reward = 0
+        if self._position > self._max_position:
+            return observation, -2000.0, True, True, info
+        if self._position < self._min_position:
+            return observation, -2000.0, True, True, info
+        
+        reward = 0.0
         # ignore n+1 limit
         if self._position == 0:
             reward = 0
@@ -86,7 +91,7 @@ class TDXRawEnv(gym.Env):
         #     raise Exception(f'reward: {reward}, position: {self._position}, action: {action}, [self._index]: {self._index}')
         if self._total_return < -0.20:
             LOG.error((f'+++++++++++++++++++++reward: {reward}, total_return: {self._total_return}, position: {self._position}, action: {action}, [self._index]: {self._index}'))
-            reward = -1000.0
+            reward = -3000.0
             return observation, reward, True, True, info
         return observation, reward, terminated, terminated, info
 

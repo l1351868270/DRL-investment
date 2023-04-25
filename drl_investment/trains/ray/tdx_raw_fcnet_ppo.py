@@ -34,13 +34,13 @@ def parse_args():
         "be achieved within --stop-timesteps AND --stop-iters.",
     )
     parser.add_argument(
-        "--stop-iters", type=int, default=50, help="Number of iterations to train."
+        "--stop-iters", type=int, default=500000000, help="Number of iterations to train."
     )
     parser.add_argument(
-        "--stop-timesteps", type=int, default=100000, help="Number of timesteps to train."
+        "--stop-timesteps", type=int, default=100000000, help="Number of timesteps to train."
     )
     parser.add_argument(
-        "--stop-reward", type=float, default=100000.0, help="Reward at which we stop training."
+        "--stop-reward", type=float, default=100000000.0, help="Reward at which we stop training."
     )
     parser.add_argument(
         "--no-tune",
