@@ -22,7 +22,11 @@ class TDXRawEnv(gym.Env):
         self._columns: list[str] = config['columns']
         self._initial_position: int = config.get('initial_position', 1)
         self._max_position: int = config.get('max_position', 10)
-        self._min_position: int = config.get('min_position', -10)
+        # self._min_position: int = config.get('min_position', -10)
+        if not isinstance(self._max_position, int):
+            raise Exception(f'max_position\'s type must int, but it is {type(self._max_position)}')
+        # if not isinstance(self._min_position, int):
+        #     raise Exception(f'min_position\'s type must int, but it is {type(self._min_position)}')
         
         self._min_len = 100
         self._len = self._data.shape[0]
@@ -33,13 +37,13 @@ class TDXRawEnv(gym.Env):
 
         self._index: int = 0
 
-        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self._data.shape[1], ), dtype=np.float32)
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self._data.shape[1]+1, ), dtype=np.float32)
 
-        self.action_space = spaces.Discrete(3) # spaces.Discrete(3, start=-1) is not {-1, 0, 1}
+        self.action_space = spaces.Box(low=np.array([0, 0]), high=np.array([3, 2*self._max_position]), dtype=np.int32) # spaces.Discrete(3, start=-1) is not {-1, 0, 1}
         
 
     def _get_obs(self):
-        return self._data[self._index]
+        return np.append(self._data[self._index], self._position)
 
     def _get_info(self):
         return {}
@@ -59,40 +63,36 @@ class TDXRawEnv(gym.Env):
         return observation, info
 
     def step(self, action):
+        self._index += 1
+        if action[0] == 0:
+            self._position +=  action[1]
+        elif action[0] == 2:
+            self._position -=  action[1]
+
         observation = self._get_obs()
         info = self._get_info()
-    
-        terminated = self._index >= self._len-1
-        if terminated:
-            return observation, 0.0, True, True, info
-        
+        # if action[0] > 3:
+            # raise Exception(f"action is : {action}")
         if self._position > self._max_position:
             return observation, -2000.0, True, True, info
-        if self._position < self._min_position:
+        if self._position < -self._max_position:
             return observation, -2000.0, True, True, info
         
-        reward = 0.0
-        # ignore n+1 limit
-        if self._position == 0:
-            reward = 0
-        elif self._position > 0:
-            reward = 0 if self._index==0 else self._data[self._index][0]/self._data[self._index-1][0]-1
-            reward *= self._position
-        elif self._position < 0:
-            reward = 0 if self._index==0 else self._data[self._index][0]/self._data[self._index-1][0]-1
-            reward *= self._position
-        
-        self._index += 1
-        self._position += action - 1
-
+        reward = self._position*(self._data[self._index][0]/self._data[self._index-1][0]-1)
+            
         # Total return less than -0.20, stop the game
         self._total_return += reward
         # if self._index > 1000:
         #     raise Exception(f'reward: {reward}, position: {self._position}, action: {action}, [self._index]: {self._index}')
         if self._total_return < -0.20:
-            LOG.error((f'+++++++++++++++++++++reward: {reward}, total_return: {self._total_return}, position: {self._position}, action: {action}, [self._index]: {self._index}'))
+            LOG.error((f'action: {action}'))
+            # LOG.error((f'+++++++++++++++++++++reward: {reward}, total_return: {self._total_return}, position: {self._position}, action: {action}, [self._index]: {self._index}'))
             reward = -3000.0
             return observation, reward, True, True, info
+        
+        terminated = self._index >= self._len-1
+        if terminated:
+            return observation, 0.0, True, True, info
         return observation, reward, terminated, terminated, info
 
     def render(self):
