@@ -39,8 +39,8 @@ class TDXRawEnv(gym.Env):
 
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self._data.shape[1]+1, ), dtype=np.float32)
 
-        self.action_space = spaces.Box(low=np.array([0, 0]), high=np.array([3, 2*self._max_position]), dtype=np.int32) # spaces.Discrete(3, start=-1) is not {-1, 0, 1}
-        
+        # self.action_space = spaces.Box(low=np.array([0, 0]), high=np.array([3, 2*self._max_position]), dtype=np.int32) # spaces.Discrete(3, start=-1) is not {-1, 0, 1}
+        self.action_space = spaces.Discrete(3*2*self._max_position)
 
     def _get_obs(self):
         return np.append(self._data[self._index], self._position)
@@ -64,10 +64,12 @@ class TDXRawEnv(gym.Env):
 
     def step(self, action):
         self._index += 1
-        if action[0] == 0:
-            self._position +=  action[1]
-        elif action[0] == 2:
-            self._position -=  action[1]
+        real_action = action//self._max_position
+        real_postion = action%self._max_position
+        if real_action == 0:
+            self._position +=  real_postion
+        elif real_action == 2:
+            self._position -=  real_postion
 
         observation = self._get_obs()
         info = self._get_info()
