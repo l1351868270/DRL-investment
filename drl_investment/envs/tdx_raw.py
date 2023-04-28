@@ -27,7 +27,7 @@ class TDXRawEnv(gym.Env):
             raise Exception(f'max_position\'s type must int, but it is {type(self._max_position)}')
         # if not isinstance(self._min_position, int):
         #     raise Exception(f'min_position\'s type must int, but it is {type(self._min_position)}')
-        
+        self._initial_funds: float = config.get('initial_funds', 100000.0)
         self._min_len = 100
         self._len = self._data.shape[0]
         if self._len < self._min_len:
