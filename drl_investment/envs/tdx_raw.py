@@ -94,8 +94,9 @@ class TDXRawEnv(gym.Env):
             return observation, reward, True, True, info
         
         # withdrawal 20% from the max return, stop the game
+
         self._max_return = self._total_return if self._total_return > self._max_return else self._max_return
-        if self._total_return / self._max_return - 1.0 < -0.20:
+        if (self._total_return + 1.0) / (self._max_return + 1.0) - 1.0 < -0.20:
             reward = 0.0
             return observation, reward, True, True, info
 
