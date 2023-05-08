@@ -30,6 +30,7 @@ class TDXRawEnv(gym.Env):
         self._initial_funds: float = config.get('initial_funds', 100000.0)
         self._min_len = 100
         self._len = self._data.shape[0]
+        
         if self._len < self._min_len:
             raise Exception(f'data length must large than {self._min_len}')
         
@@ -56,7 +57,7 @@ class TDXRawEnv(gym.Env):
         self._position = self._initial_position
 
         self._total_return = 0.0 # Total return until now
-
+        self._max_return = 0.0 # Max return until now
         observation = self._get_obs()
         info = self._get_info()
 
@@ -76,9 +77,9 @@ class TDXRawEnv(gym.Env):
         # if action[0] > 3:
             # raise Exception(f"action is : {action}")
         if self._position > self._max_position:
-            return observation, -2000.0, True, True, info
+            return observation, 0.0, True, True, info
         if self._position < -self._max_position:
-            return observation, -2000.0, True, True, info
+            return observation, 0.0, True, True, info
         
         reward = self._position*(self._data[self._index][0]/self._data[self._index-1][0]-1)
             
@@ -87,10 +88,17 @@ class TDXRawEnv(gym.Env):
         # if self._index > 1000:
         #     raise Exception(f'reward: {reward}, position: {self._position}, action: {action}, [self._index]: {self._index}')
         if self._total_return < -0.20:
-            LOG.error((f'action: {action}'))
+            # LOG.error((f'action: {action}'))
             # LOG.error((f'+++++++++++++++++++++reward: {reward}, total_return: {self._total_return}, position: {self._position}, action: {action}, [self._index]: {self._index}'))
-            reward = -3000.0
+            reward = 0.0
             return observation, reward, True, True, info
+        
+        # withdrawal 20% from the max return, stop the game
+        self._max_return = self._total_return if self._total_return > self._max_return else self._max_return
+        if self._total_return / self._max_return - 1.0 < -0.20:
+            reward = 0.0
+            return observation, reward, True, True, info
+
         
         terminated = self._index >= self._len-1
         if terminated:
