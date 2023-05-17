@@ -4,6 +4,7 @@ import logging
 import numpy as np
 import pandas as pd
 # from gym.envs.registration import register
+from gymnasium.envs.registration import EnvSpec
 
 from drl_investment.data.tdx import DataRaw
 
@@ -16,6 +17,7 @@ class TDXRawEnv(gym.Env):
     refer to: https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/
     '''
     metadata = {'render_modes': ['human', 'rgb_array'], 'render_fps': 4}
+    # spec = EnvSpec("drl_investment/TDXRaw-v0")
 
     def __init__(self, config: dict):
         self._data: np.array = config['data']
@@ -87,18 +89,18 @@ class TDXRawEnv(gym.Env):
         self._total_return += reward
         # if self._index > 1000:
         #     raise Exception(f'reward: {reward}, position: {self._position}, action: {action}, [self._index]: {self._index}')
-        if self._total_return < -0.20:
-            # LOG.error((f'action: {action}'))
-            # LOG.error((f'+++++++++++++++++++++reward: {reward}, total_return: {self._total_return}, position: {self._position}, action: {action}, [self._index]: {self._index}'))
-            reward = 0.0
-            return observation, reward, True, True, info
+        # if self._total_return < -0.20:
+        #     # LOG.error((f'action: {action}'))
+        #     # LOG.error((f'+++++++++++++++++++++reward: {reward}, total_return: {self._total_return}, position: {self._position}, action: {action}, [self._index]: {self._index}'))
+        #     reward = 0.0
+        #     return observation, reward, True, True, info
         
         # withdrawal 20% from the max return, stop the game
 
         self._max_return = self._total_return if self._total_return > self._max_return else self._max_return
-        if (self._total_return + 1.0) / (self._max_return + 1.0) - 1.0 < -0.20:
-            reward = 0.0
-            return observation, reward, True, True, info
+        # if (self._total_return + 1.0) / (self._max_return + 1.0) - 1.0 < -0.20:
+        #     reward = 0.0
+        #     return observation, reward, True, True, info
 
         
         terminated = self._index >= self._len-1
