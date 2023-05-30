@@ -14,6 +14,6 @@ The data path in tdx is /path/vipdoc/sz/lday  /path/vipdoc/sh/lday
 # Material of Deep Reinforcement Learning
 
 ```
-[1]https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/
-[2]https://stable-baselines3.readthedocs.io/en/master/
+[https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/)
+[https://stable-baselines3.readthedocs.io/en/master/](https://stable-baselines3.readthedocs.io/en/master/)
 ```
