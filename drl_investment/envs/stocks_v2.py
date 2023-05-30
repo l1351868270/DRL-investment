@@ -29,14 +29,16 @@ class StocksEnvV1(gym.Env):
         '''
         data: pd.DataFrame = config['data']
         _data = data[['open', 'high', 'low', 'close']]
-        _data['high'] = _data['high']/_data['open'] - 1.0
-        _data['low'] = _data['low']/_data['open'] - 1.0
-        _data['close'] = _data['close']/_data['open'] - 1.0
+        _data['high/open'] = _data['high']/_data['open'] - 1.0
+        _data['low/open'] = _data['low']/_data['open'] - 1.0
+        _data['close/open'] = _data['close']/_data['open'] - 1.0
         _data['position'] = 0.0
-        self._data = _data.to_numpy()
+        # self._data = _data.to_numpy()
+        self._data = _data
+        self._column = ['high/open', 'low/open', 'close/open', 'position']
 
-        # self._bars_count = config.get('bars_count', 10)
-        # offset = bars_count - 1
+        self._bars_count = config.get('bars_count', 10)
+        self._offset = self._bars_count - 1
         self._commission_perc = config.get('commission_perc', 0.01)
         self._reward_on_close = config.get('reward_on_close', False)
 
@@ -62,7 +64,7 @@ class StocksEnvV1(gym.Env):
         super().reset(seed=seed)
 
         # self._offset = self.np_random.choice(self._data.shape[0])
-        self._offset = 1
+        self._offset = self._bars_count - 1
         self._position = self.np_random.choice(2)
         if self._position == 0:
             self._open_price = 0.0
@@ -76,7 +78,7 @@ class StocksEnvV1(gym.Env):
 
     def step(self, action):
         reward = 0.0
-        terminated = False
+        done = False
         close = self._cur_close()
         if action == 0 and self._position == 0:
             self._position = 1
@@ -95,8 +97,7 @@ class StocksEnvV1(gym.Env):
         self._offset += 1
         prev_close = close
         close = self._cur_close()
-        terminated |= self._offset >= self._data.shape[0]-1
-        truncated = terminated
+        done |= self._offset >= self._data.shape[0]-1
 
         if self._position == 1 and not self._reward_on_close:
             reward += 100.0 * (close / prev_close - 1.0)
@@ -104,7 +105,7 @@ class StocksEnvV1(gym.Env):
         observation = self._get_obs()
         info = self._get_info()
 
-        return observation, reward, terminated, truncated, info
+        return observation, reward, done, done, info
 
 
     def render(self):
