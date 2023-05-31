@@ -19,3 +19,5 @@ The data path in tdx is /path/vipdoc/sz/lday  /path/vipdoc/sh/lday
 [2][https://stable-baselines3.readthedocs.io/en/master/](https://stable-baselines3.readthedocs.io/en/master/)
 
 [3][https://spinningup.openai.com/en/latest/index.html](https://spinningup.openai.com/en/latest/index.html)
+
+[4][https://huggingface.co/learn/deep-rl-course/unit0/introduction](https://huggingface.co/learn/deep-rl-course/unit0/introduction)
