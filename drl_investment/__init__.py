@@ -11,3 +11,8 @@ gymnasium_register(
     id='drl_investment/StocksEnv-v1',
     entry_point="drl_investment.envs.stocks_v1:StocksEnvV1",
 )
+
+gymnasium_register(
+    id='drl_investment/StocksEnv-v2',
+    entry_point="drl_investment.envs.stocks_v2:StocksEnvV2",
+)
