@@ -227,7 +227,45 @@ class Alpha101(object):
         # Alpha#20: (((-1 * rank((open - delay(high, 1)))) * rank((open - delay(close, 1)))) * rank((open - delay(low, 1))))
         return -1 * self.rank(self.open - self.delay(self.high, 1)) * self.rank(self.open - self.delay(self.close, 1)) *self.rank(self.open - self.delay(self.low, 1))
 
+    def alpha_021(self) -> pd.Series:
+        # Alpha#21: ((((sum(close, 8) / 8) + stddev(close, 8)) < (sum(close, 2) / 2)) ? (-1 * 1) : (((sum(close, 2) / 2) < ((sum(close, 8) / 8) - stddev(close, 8))) ? 1 : (((1 < (volume / adv20)) || ((volume / adv20) == 1)) ? 1 : (-1 * 1)))) 
+        return self.condition(self.sum(self.close, 8) / 8 + self.stddev(self.close, 8) < self.sum(self.close, 2) / 2, -1, self.condition(self.sum(self.close, 2) / 2 < self.sum(self.close, 8) - self.stddev(self.close, 8), 1, self.condition(1 <= self.volume / self.adv(20), 1, -1)))
 
+    def alpha_022(self) -> pd.Series:
+        # Alpha#22: (-1 * (delta(correlation(high, volume, 5), 5) * rank(stddev(close, 20)))) 
+        return -1 * self.delta(self.correlation(self.high, self.volume, 5), 5) * self.rank(self.stddev(self.close, 20))
+        
+    def alpha_023(self) -> pd.Series:
+        # Alpha#23: (((sum(high, 20) / 20) < high) ? (-1 * delta(high, 2)) : 0) 
+        return self.condition(self.sum(self.high, 20) / 20 < self.high, -1 * self.delta(self.high, 2), 0)
+    
+    def alpha_024(self) -> pd.Series:
+        # Alpha#24: ((((delta((sum(close, 100) / 100), 100) / delay(close, 100)) < 0.05) || ((delta((sum(close, 100) / 100), 100) / delay(close, 100)) == 0.05)) ? (-1 * (close - ts_min(close, 100))) : (-1 * delta(close, 3)))
+        return self.condition(self.delta(self.sum(self.close, 100) / 100, 100) / self.delay(self.close, 100) <= 0.05, -1 * (self.close - self.ts_min(self.close, 100)), -1 * self.delta(self.close, 3))
+    
+    def alpha_025(self) -> pd.Series:
+        # Alpha#25: rank(((((-1 * returns) * adv20) * vwap) * (high - close))) 
+        return self.rank(-1 * self.returns * self.adv(20) * self.vwap * (self.high - self.close))
+    
+    def alpha_026(self) -> pd.Series:
+        # Alpha#26: (-1 * ts_max(correlation(ts_rank(volume, 5), ts_rank(high, 5), 5), 3)) 
+        return -1 * self.ts_max(self.correlation)
+
+    def alpha_027(self) -> pd.Series:
+        # Alpha#27: ((0.5 < rank((sum(correlation(rank(volume), rank(vwap), 6), 2) / 2.0))) ? (-1 * 1) : 1) 
+        return
+    
+    def alpha_028(self) -> pd.Series:
+        # Alpha#28: scale(((correlation(adv20, low, 5) + ((high + low) / 2)) - close)) 
+        return
+
+    def alpha_029(self) -> pd.Series:
+        # Alpha#29: (min(product(rank(rank(scale(log(sum(ts_min(rank(rank((-1 * rank(delta((close - 1), 5))))), 2), 1))))), 1), 5) + ts_rank(delay((-1 * returns), 6), 5)) 
+        return
+    
+    def alpha_030(self) -> pd.Series:
+        # Alpha#30: (((1.0 - rank(((sign((close - delay(close, 1))) + sign((delay(close, 1) - delay(close, 2)))) + sign((delay(close, 2) - delay(close, 3)))))) * sum(volume, 5)) / sum(volume, 20))
+        return
 
 class Alpha101Pytorch(object):
     def __init__(self, data=None):
