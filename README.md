@@ -13,22 +13,21 @@ The data path in tdx is /path/vipdoc/sz/lday  /path/vipdoc/sh/lday
 
 # Material of Deep Reinforcement Learning
 
-[1][https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/)
+[1][The 37 Implementation Details of Proximal Policy Optimization](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/)
 
-[2][https://stable-baselines3.readthedocs.io/en/master/](https://stable-baselines3.readthedocs.io/en/master/)
+[2][Stable-Baselines3 Docs - Reliable Reinforcement Learning Implementations](https://stable-baselines3.readthedocs.io/en/master/)
 
-[3][https://spinningup.openai.com/en/latest/index.html](https://spinningup.openai.com/en/latest/index.html)
+[3][Welcome to Spinning Up in Deep RL!](https://spinningup.openai.com/en/latest/index.html)
 
-[4][https://huggingface.co/learn/deep-rl-course/unit0/introduction](https://huggingface.co/learn/deep-rl-course/unit0/introduction)
+[4][Welcome to the 🤗 Deep Reinforcement Learning Course](https://huggingface.co/learn/deep-rl-course/unit0/introduction)
 
-[5][https://pybullet.org/wordpress/](https://pybullet.org/wordpress/)
+[5][KUBRIC: A SCALABLE DATASET GENERATOR](https://pybullet.org/wordpress/)
 
-[6][https://www.gymlibrary.dev/](https://www.gymlibrary.dev/)
+[6][Gym](https://www.gymlibrary.dev/)
 
-[7][https://gymnasium.farama.org/](https://gymnasium.farama.org/)
+[7][Gymnasium](https://gymnasium.farama.org/)
 
-[8][http://joschu.net/index.html](http://joschu.net/index.html)
-
+[8][John Schulman's Homepage](http://joschu.net/index.html)
 
 
 # Material of Investment
@@ -38,4 +37,4 @@ The data path in tdx is /path/vipdoc/sz/lday  /path/vipdoc/sh/lday
 
 # Material of RLHF
 
-[1][https://huggingface.co/blog/rlhf](https://huggingface.co/blog/rlhf)
+[1][Illustrating Reinforcement Learning from Human Feedback (RLHF)](https://huggingface.co/blog/rlhf)
