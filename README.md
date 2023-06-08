@@ -29,7 +29,13 @@ The data path in tdx is /path/vipdoc/sz/lday  /path/vipdoc/sh/lday
 
 [8][http://joschu.net/index.html](http://joschu.net/index.html)
 
+
+
 # Material of Investment
 [1][101 Formulaic Alphas ](https://arxiv.org/ftp/arxiv/papers/1601/1601.00991.pdf)
 
 [2][151 Trading Strategies](https://arxiv.org/pdf/1912.04492.pdf)
+
+# Material of RLHF
+
+[1][https://huggingface.co/blog/rlhf](https://huggingface.co/blog/rlhf)
