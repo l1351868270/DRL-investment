@@ -8,7 +8,6 @@ import ray
 from ray import air, tune
 from ray.rllib.models import ModelCatalog
 from ray.rllib.utils.test_utils import check_learning_achieved
-from ray.tune.logger import pretty_print
 from ray.tune.registry import get_trainable_cls
 
 from drl_investment.models.ray.fc_net import TorchFC
@@ -17,7 +16,7 @@ from drl_investment.data.tdx import unpack_data
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--path', type=str, default=f'', help='The tdx stock data')
+    parser.add_argument('--path', type=str, default='~/.drl_investment/data', help='The tdx stock data')
     parser.add_argument(
         '--run', type=str, default='PPO', help='The RLlib-registered algorithm to use.'
     )
@@ -53,10 +52,6 @@ def parse_args():
     return args
 
 
-def config(args):
-    pass
-
-
 def main(args):
     pass
 
@@ -66,7 +61,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     print(f'Running with following CLI options: {args}')
-    
+
     ray.init(local_mode=args.local_mode)
 
     # Can also register the env creator function explicitly with:

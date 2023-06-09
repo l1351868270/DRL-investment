@@ -1,23 +1,11 @@
 '''
 refer to: https://github.com/ray-project/ray/blob/master/rllib/examples/custom_env.py
 '''
-import argparse
-import os
-
-import ray
-from ray import air, tune
-from ray.rllib.models import ModelCatalog
-from ray.rllib.utils.test_utils import check_learning_achieved
 from ray.tune.logger import pretty_print
-from ray.tune.registry import get_trainable_cls
+from ray.rllib.algorithms.ppo import PPOConfig
 
-from drl_investment.models.ray.fc_net import TorchFC
 from drl_investment.envs.tdx_raw import TDXRawEnv
 from drl_investment.data.tdx import unpack_data
-
-from ray.rllib.algorithms.ppo import PPOConfig
-from ray.tune.logger import pretty_print
-
 
 df = unpack_data(r'E:\code\github\l1351868270\DRL-investment\drl_investment\tests\assets\sh000001.day')['2006-01-01':]
 env_config = {

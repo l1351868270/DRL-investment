@@ -1,8 +1,4 @@
-import gymnasium as gym
-from gymnasium.wrappers.normalize import NormalizeObservation
-
 from stable_baselines3 import PPO
-from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.env_checker import check_env
 from drl_investment.data.tdx import unpack_data
 from drl_investment.envs.stocks_v4 import StocksEnvV4

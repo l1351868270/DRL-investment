@@ -5,12 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from ray.rllib.policy.policy import Policy
 
-from drl_investment.models.ray.fc_net import TorchFC
 from drl_investment.envs.stocks_v1 import StocksEnvV1
 from drl_investment.data.tdx import unpack_data
-
-from ray.rllib.algorithms.ppo import PPOConfig
-from ray.tune.logger import pretty_print
 
 
 df = unpack_data(r'E:\code\github\l1351868270\DRL-investment\drl_investment\tests\assets\sh000001.day')['2006-01-01':]
@@ -39,7 +35,5 @@ fig, ax = plt.subplots()
 ax.plot(rewards)
 fig.show()
 
-
-    
 
 

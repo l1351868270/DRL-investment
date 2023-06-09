@@ -2,11 +2,6 @@ import gymnasium as gym
 from gymnasium import spaces
 import logging
 import numpy as np
-import pandas as pd
-# from gym.envs.registration import register
-from gymnasium.envs.registration import EnvSpec
-
-from drl_investment.data.tdx import DataRaw
 
 
 LOG = logging.getLogger(__name__)
@@ -32,10 +27,10 @@ class TDXRawEnv(gym.Env):
         self._initial_funds: float = config.get('initial_funds', 100000.0)
         self._min_len = 100
         self._len = self._data.shape[0]
-        
+
         if self._len < self._min_len:
             raise Exception(f'data length must large than {self._min_len}')
-        
+
         assert self._data.shape[1] == len(self._columns)
 
         self._index: int = 0
@@ -82,9 +77,9 @@ class TDXRawEnv(gym.Env):
             return observation, 0.0, True, True, info
         if self._position < -self._max_position:
             return observation, 0.0, True, True, info
-        
+
         reward = self._position*(self._data[self._index][0]/self._data[self._index-1][0]-1)
-            
+
         # Total return less than -0.20, stop the game
         self._total_return += reward
         # if self._index > 1000:
@@ -94,7 +89,7 @@ class TDXRawEnv(gym.Env):
         #     # LOG.error((f'+++++++++++++++++++++reward: {reward}, total_return: {self._total_return}, position: {self._position}, action: {action}, [self._index]: {self._index}'))
         #     reward = 0.0
         #     return observation, reward, True, True, info
-        
+
         # withdrawal 20% from the max return, stop the game
 
         self._max_return = self._total_return if self._total_return > self._max_return else self._max_return
@@ -102,7 +97,7 @@ class TDXRawEnv(gym.Env):
         #     reward = 0.0
         #     return observation, reward, True, True, info
 
-        
+
         terminated = self._index >= self._len-1
         if terminated:
             return observation, 0.0, True, True, info

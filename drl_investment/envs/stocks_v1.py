@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import gymnasium as gym
 from gymnasium import spaces
-from gymnasium.envs.registration import EnvSpec
 
 LOG = logging.getLogger(__name__)
 
@@ -19,7 +18,7 @@ class StocksEnvV1(gym.Env):
 
     def __init__(self, config: dict):
         '''
-        actions: 
+        actions:
           0 - buy
           1 - skip
           2 - sell
@@ -49,7 +48,7 @@ class StocksEnvV1(gym.Env):
 
     def _get_info(self):
         return {'offset': self._offset}
-    
+
     def _cur_close(self):
         """
         Calculate real close price for the current bar
@@ -57,7 +56,7 @@ class StocksEnvV1(gym.Env):
         open = self._data[self._offset][0]
         rel_close = self._data[self._offset][3]
         return open * (1.0 + rel_close)
-    
+
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
 

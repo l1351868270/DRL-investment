@@ -1,11 +1,9 @@
 import os
 import unittest
 import logging
-from datetime import datetime
 import gym
 
 from drl_investment.data.tdx import unpack_data
-from drl_investment.envs.tdx_raw import TDXRawEnv
 
 
 LOG = logging.getLogger(__name__)

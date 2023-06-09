@@ -17,7 +17,7 @@ class StocksEnvV2(gym.Env):
 
     def __init__(self, config: dict):
         '''
-        actions: 
+        actions:
           0 - buy
           1 - skip
           2 - sell
@@ -45,10 +45,10 @@ class StocksEnvV2(gym.Env):
 
     def _get_info(self):
         return {'offset': self._offset, 'observation': self._data.iloc[self._offset].to_numpy().tolist()}
-    
+
     def _cur_close(self):
         return self._data.iloc[self._offset]['close']
-    
+
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
 
