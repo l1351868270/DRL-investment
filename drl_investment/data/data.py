@@ -1,6 +1,7 @@
 import abc
 import pandas as pd
 import numpy as np
+from typing import Union, Any
 
 
 class DataBase(abc.ABC):
@@ -63,7 +64,7 @@ class Alpha101(object):
         # covariance(x, y, d) = time-serial covariance of x and y for the past d days
         return x.rolling(d).cov(y)
     
-    def scale(self, x: pd.Series, a) -> pd.Series:
+    def scale(self, x: pd.Series, a = 1.0) -> pd.Series:
         # scale(x, a) = rescaled x such that sum(abs(x)) = a (the default is a = 1)
         return x * (a / (x.abs().sum()))
         
@@ -132,10 +133,12 @@ class Alpha101(object):
         # adv{d} = average daily dollar volume for the past d days
         return x.rolling(d).mean()
     
-    def condition(self, con: pd.Series, x: pd.Series, y: pd.Series) -> pd.Series:
+    def condition(self, con: pd.Series, x: Union[pd.Series, int, float], y: Union[pd.Series, int, float]) -> pd.Series:
         assert isinstance(x, pd.Series) or isinstance(y, pd.Series), 'x or y must has one pd.Series'
-    
-        if not isinstance(y, pd.Series):
+        if (not isinstance(x, pd.Series)) and (not isinstance(y, pd.Series)):
+            inner = pd.Series(x, np.float32(y))
+            inner[con] = np.float32(x)
+        elif not isinstance(y, pd.Series):
             inner: pd.Series = x
             inner[~con] = y
         else:
@@ -249,23 +252,74 @@ class Alpha101(object):
     
     def alpha_026(self) -> pd.Series:
         # Alpha#26: (-1 * ts_max(correlation(ts_rank(volume, 5), ts_rank(high, 5), 5), 3)) 
-        return -1 * self.ts_max(self.correlation)
+        return -1 * self.ts_max(self.correlation(self.ts_rank(self.volume, 5), self.ts_rank(self.high, 5), 5), 3)
 
     def alpha_027(self) -> pd.Series:
         # Alpha#27: ((0.5 < rank((sum(correlation(rank(volume), rank(vwap), 6), 2) / 2.0))) ? (-1 * 1) : 1) 
-        return
-    
+        return self.condition(0.5 < self.sum(self.correlation(self.rank(self.volume), self.rank(self.vwap), 6), 2) / 2.0, -1.0, 1.0)
+        
     def alpha_028(self) -> pd.Series:
         # Alpha#28: scale(((correlation(adv20, low, 5) + ((high + low) / 2)) - close)) 
-        return
-
+        return self.scale(self.correlation(self.adv(20), self.low, 5) + (self.high + self.low) / 2 - self.close)
+        
     def alpha_029(self) -> pd.Series:
         # Alpha#29: (min(product(rank(rank(scale(log(sum(ts_min(rank(rank((-1 * rank(delta((close - 1), 5))))), 2), 1))))), 1), 5) + ts_rank(delay((-1 * returns), 6), 5)) 
-        return
-    
+        return self.min(self.product(self.rank(self.rank(self.scale(self.log(self.sum(self.ts_min(self.rank(self.rank(-1 * self.rank(self.delta(self.close - 1.0, 5)))), 2), 1))))), 1), 5) + self.ts_rank(self.delay(-1 * self.returns, 6), 5)
+        
     def alpha_030(self) -> pd.Series:
         # Alpha#30: (((1.0 - rank(((sign((close - delay(close, 1))) + sign((delay(close, 1) - delay(close, 2)))) + sign((delay(close, 2) - delay(close, 3)))))) * sum(volume, 5)) / sum(volume, 20))
+        return (1.0 - self.rank(self.sign(self.close - self.delay(self.close, 1)) + self.sign(self.delay(self.close, 1) - self.delay(self.close, 2)) + self.sign(self.delay(self.close, 2) - self.delay(self.close, 3)))) * self.sum(self.volume, 5) / self.sum(self.volume, 20)
+    
+    def alpha_031(self) -> pd.Series:
+        # Alpha#31: ((rank(rank(rank(decay_linear((-1 * rank(rank(delta(close, 10)))), 10)))) + rank((-1 * delta(close, 3)))) + sign(scale(correlation(adv20, low, 12)))) 
+        return self.rank(self.rank(self.decay_linear(self.rank(self.rank(self.delta(self.close, 10))), 10))) + self.rank(-1 * self.delta(self.close, 3)) + self.sign(self.scale(self.correlation(self.adv(20), self.low, 12)))
+        
+    def alpha_032(self) -> pd.Series:
+        # Alpha#32: (scale(((sum(close, 7) / 7) - close)) + (20 * scale(correlation(vwap, delay(close, 5), 230)))) 
+        return self.scale(self.sum(self.close, 7) / 7 -self.close) + 20 * self.scale(self.correlation(self.vwap, self.delay(self.close, 5), 230))
+        
+    def alpha_033(self) -> pd.Series:
+        # Alpha#33: rank((-1 * ((1 - (open / close))^1))) 
+        
         return
+    
+    def alpha_034(self) -> pd.Series:
+        # Alpha#34: rank(((1 - rank((stddev(returns, 2) / stddev(returns, 5)))) + (1 - rank(delta(close, 1))))) 
+        return
+    
+    def alpha_035(self) -> pd.Series:
+        # Alpha#35: ((Ts_Rank(volume, 32) * (1 - Ts_Rank(((close + high) - low), 16))) * (1 - Ts_Rank(returns, 32))) 
+        return
+    
+    def alpha_036(self) -> pd.Series:
+        # Alpha#36: (((((2.21 * rank(correlation((close - open), delay(volume, 1), 15))) + (0.7 * rank((open - close)))) + (0.73 * rank(Ts_Rank(delay((-1 * returns), 6), 5)))) + rank(abs(correlation(vwap, adv20, 6)))) + (0.6 * rank((((sum(close, 200) / 200) - open) * (close - open))))) 
+
+        return
+    
+    def alpha_037(self) -> pd.Series:
+        # Alpha#37: (rank(correlation(delay((open - close), 1), close, 200)) + rank((open - close))) 
+        return
+    
+    def alpha_038(self) -> pd.Series:
+        # Alpha#38: ((-1 * rank(Ts_Rank(close, 10))) * rank((close / open))) 
+        return
+      
+    def alpha_039(self) -> pd.Series:
+        # Alpha#39: ((-1 * rank((delta(close, 7) * (1 - rank(decay_linear((volume / adv20), 9)))))) * (1 + rank(sum(returns, 250)))) 
+        return
+      
+    def alpha_040(self) -> pd.Series:
+        # Alpha#40: ((-1 * rank(stddev(high, 10))) * correlation(high, volume, 10))
+        return
+    
+    def alpha_041(self) -> pd.Series:
+        # 
+        return
+    
+    def alpha_042(self) -> pd.Series:
+        # 
+        return
+
 
 class Alpha101Pytorch(object):
     def __init__(self, data=None):

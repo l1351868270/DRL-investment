@@ -1,6 +1,0 @@
-expecttest
-numpy
-pandas
-jupyter
-ray[all]
-gym[all]
