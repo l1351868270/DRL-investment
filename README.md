@@ -35,6 +35,8 @@ The data path in tdx is /path/vipdoc/sz/lday  /path/vipdoc/sh/lday
 
 [2][151 Trading Strategies](https://arxiv.org/pdf/1912.04492.pdf)
 
+[3][基于短周期价量特征的多因子选股体系](alpha 191)
+
 # Material of RLHF
 
 [1][Illustrating Reinforcement Learning from Human Feedback (RLHF)](https://huggingface.co/blog/rlhf)
