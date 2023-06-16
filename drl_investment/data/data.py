@@ -51,6 +51,8 @@ class Alpha101(object):
 
         self.unavailable = ['alpha_048', 'alpha_056', 'alpha_058', 'alpha_059', 'alpha_063', 'alpha_067',
                             'alpha_069', 'alpha_070', 'alpha_076', 'alpha_078', 'alpha_079', 'alpha_080',
+                            'alpha_082', 'alpha_085', 'alpha_087', 'alpha_089', 'alpha_090', 'alpha_091',
+                            'alpha_093'
                             ]
 
     def abs(self, x: pd.Series) -> pd.Series:
@@ -494,67 +496,57 @@ class Alpha101(object):
 
     def alpha_081(self) -> pd.Series:
         # Alpha#81: ((rank(Log(product(rank((rank(correlation(vwap, sum(adv10, 49.6054), 8.47743))^4)), 14.9655))) < rank(correlation(rank(vwap), rank(volume), 5.07914))) * -1)
-        return
+        return self.condition(self.rank(self.log(self.product(self.rank(self.pow(self.rank(self.correlation(self.vwap, self.sum(self.adv(10), 50), 8)), 4)), 15))) < self.rank(self.correlation(self.rank(self.vwap), self.rank(self.volume), 5)), 1.0, 0.0) * -1
 
     def alpha_082(self) -> pd.Series:
         # Alpha#82: (min(rank(decay_linear(delta(open, 1.46063), 14.8717)), Ts_Rank(decay_linear(correlation(IndNeutralize(volume, IndClass.sector), ((open * 0.634196) + (open * (1 - 0.634196))), 17.4842), 6.92131), 13.4283)) * -1)
-
-        return
+        raise FunctionNotImplement(self.alpha_082)
 
     def alpha_083(self) -> pd.Series:
         # Alpha#83: ((rank(delay(((high - low) / (sum(close, 5) / 5)), 2)) * rank(rank(volume))) / (((high - low) / (sum(close, 5) / 5)) / (vwap - close)))
-
-        return
+        return (self.rank(self.delay((self.high - self.low) / (self.sum(self.close, 5) / 5), 2)) * self.rank(self.rank(self.volume))) / (((self.high - self.low) / (self.sum(self.close, 5) / 5)) / (self.vwap - self.close))
 
     def alpha_084(self) -> pd.Series:
         # Alpha#84: SignedPower(Ts_Rank((vwap - ts_max(vwap, 15.3217)), 20.7127), delta(close, 4.96796))
-
-        return
+        return self.signedpower(self.ts_rank(self.vwap - self.ts_max(self.vwap, 15), 21), self.delta(self.close, 5))
 
     def alpha_085(self) -> pd.Series:
         # Alpha#85: (rank(correlation(((high * 0.876703) + (close * (1 - 0.876703))), adv30, 9.61331))^rank(correlation(Ts_Rank(((high + low) / 2), 3.70596), Ts_Rank(volume, 10.1595), 7.11408)))
-
-        return
+        self.rank(self.correlation(self.high * 0.876703 + self.close * (1 - 0.876703), self.adv(30), 10))
+        self.rank(self.correlation(self.ts_rank((self.high + self.low) / 2, 4), self.ts_rank(self.volume, 10), 7))
+        raise FunctionNotImplement(self.alpha_085)
 
     def alpha_086(self) -> pd.Series:
         # Alpha#86: ((Ts_Rank(correlation(close, sum(adv20, 14.7444), 6.00049), 20.4195) < rank(((open + close) - (vwap + open)))) * -1)
-
-        return
+        return self.condition(self.ts_rank(self.correlation(self.close, self.sum(self.adv20, 15), 6), 20), self.rank((self.open + self.close) - (self.vwap + self.open)), 1.0, 0.0) * -1
 
     def alpha_087(self) -> pd.Series:
         # Alpha#87: (max(rank(decay_linear(delta(((close * 0.369701) + (vwap * (1 - 0.369701))), 1.91233), 2.65461)), Ts_Rank(decay_linear(abs(correlation(IndNeutralize(adv81, IndClass.industry), close, 13.4132)), 4.89768), 14.4535)) * -1)
-
-        return
+        raise FunctionNotImplement(self.alpha_087)
 
     def alpha_088(self) -> pd.Series:
         # Alpha#88: min(rank(decay_linear(((rank(open) + rank(low)) - (rank(high) + rank(close))), 8.06882)), Ts_Rank(decay_linear(correlation(Ts_Rank(close, 8.44728), Ts_Rank(adv60, 20.6966), 8.01266), 6.65053), 2.61957))
-
-        return
+        return self.min(self.rank(self.decay_linear((self.rank(self.open) + self.rank(self.low)) - (self.rank(self.high) + self.rank(self.close)), 8)), self.ts_rank(self.decay_linear(self.correlation(self.ts_rank(self.close, 8), self.ts_rank(self.adv(60), 21), 8), 7), 3))
 
     def alpha_089(self) -> pd.Series:
         # Alpha#89: (Ts_Rank(decay_linear(correlation(((low * 0.967285) + (low * (1 - 0.967285))), adv10, 6.94279), 5.51607), 3.79744) - Ts_Rank(decay_linear(delta(IndNeutralize(vwap, IndClass.industry), 3.48158), 10.1466), 15.3012))
-
-        return
+        raise FunctionNotImplement(self.alpha_089)
 
     def alpha_090(self) -> pd.Series:
         # Alpha#90: ((rank((close - ts_max(close, 4.66719)))^Ts_Rank(correlation(IndNeutralize(adv40, IndClass.subindustry), low, 5.38375), 3.21856)) * -1)
-
-        return
+        raise FunctionNotImplement(self.alpha_090)
 
     def alpha_091(self) -> pd.Series:
         # Alpha#91: ((Ts_Rank(decay_linear(decay_linear(correlation(IndNeutralize(close, IndClass.industry), volume, 9.74928), 16.398), 3.83219), 4.8667) - rank(decay_linear(correlation(vwap, adv30, 4.01303), 2.6809))) * -1)
-
-        return
+        raise FunctionNotImplement(self.alpha_091)
 
     def alpha_092(self) -> pd.Series:
         # Alpha#92: min(Ts_Rank(decay_linear(((((high + low) / 2) + close) < (low + open)), 14.7221), 18.8683), Ts_Rank(decay_linear(correlation(rank(low), rank(adv30), 7.58555), 6.94024), 6.80584))
-
-        return
+        return self.min(self.ts_rank(self.decay_linear(self.condition(((self.high + self.low) / 2 + self.close) < (self.low + self.open), 1.0, 0.0), 15), 19), self.ts_rank(self.decay_linear(self.correlation(self.rank(self.low), self.rank(self.adv(30)), 8), 7), 7))
 
     def alpha_093(self) -> pd.Series:
         # Alpha#93: (Ts_Rank(decay_linear(correlation(IndNeutralize(vwap, IndClass.industry), adv81, 17.4193), 19.848), 7.54455) / rank(decay_linear(delta(((close * 0.524434) + (vwap * (1 - 0.524434))), 2.77377), 16.2664)))
-
-        return
+        raise FunctionNotImplement(self.alpha_093)
 
     def alpha_094(self) -> pd.Series:
         # Alpha#94: ((rank((vwap - ts_min(vwap, 11.5783)))^Ts_Rank(correlation(Ts_Rank(vwap, 19.6462), Ts_Rank(adv60, 4.02992), 18.0926), 2.70756)) * -1)
