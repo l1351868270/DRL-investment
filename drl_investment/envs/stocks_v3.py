@@ -78,10 +78,10 @@ class StocksEnvV3(gym.Env):
         if action == 0 and self._position == 0:
             self._position = 1
             self._open_price = close
-            LOG.error(f'buy: {close}')
+            # LOG.error(f'buy: {close}')
             reward -= self._commission_perc
         if action == 2 and self._position == 1:
-            LOG.error(f'sell: {close}')
+            # LOG.error(f'sell: {close}')
             reward -= self._commission_perc
             # done |= self._reset_on_close
             if self._reward_on_close:

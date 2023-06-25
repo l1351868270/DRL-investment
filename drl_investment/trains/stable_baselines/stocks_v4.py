@@ -1,3 +1,7 @@
+import os
+import logging
+import datetime
+
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 from drl_investment.data.tdx import unpack_data
@@ -11,8 +15,11 @@ from drl_investment.envs.stocks_v4 import StocksEnvV4
 #     entry_point="drl_investment.envs.stocks_v2:StocksEnvV2",
 # )
 
+LOG = logging.getLogger(__name__)
+
 # Parallel environments
-df = unpack_data(r'E:\code\github\l1351868270\DRL-investment\drl_investment\tests\assets\sh000001.day')['2006-01-01':]
+data_path = os.path.join(os.path.dirname(__file__), '../..', 'tests/assets/sh000001.day')
+df = unpack_data(data_path)['2006-01-01':]
 env_config = {
     'data': df
 }
@@ -22,7 +29,19 @@ env = StocksEnvV4(config=env_config)
 
 check_env(env)
 
-model = PPO("MlpPolicy", env, verbose=1, tensorboard_log="./ppo_stocks_v2_tensorboard/")
+tensorboard_log = os.path.expanduser('~/sb3_results/ppo_stocks_v4')
+
+
+model = PPO('MlpPolicy', env, verbose=2, tensorboard_log=tensorboard_log)
 print(model.policy)
-model.learn(total_timesteps=250000)
-model.save("ppo_stocks_v2")
+TIMESTEPS = 1500000
+begin_time = datetime.datetime.now()
+model.learn(total_timesteps=TIMESTEPS)
+model.save(os.path.join(model.logger.dir, f'model'))
+print(f'The begin loop cost {datetime.datetime.now() - begin_time}s')
+
+for i in range(1, 1000):
+    begin_time = datetime.datetime.now()
+    model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False)
+    model.save(os.path.join(model.logger.dir, f'model_{i*TIMESTEPS}'))
+    print(f'The {i} loop ({i*TIMESTEPS}-{(i+1)*TIMESTEPS-1} steps) cost {datetime.datetime.now() - begin_time}s')

@@ -24,7 +24,7 @@ def main():
             'ray[all]=>2.5.0',
         ],
         'sb3': [
-            'stable-baselines3>=1.8.0',
+            'stable-baselines3>=2.0.0',
         ]
     }
     all_extras = []
