@@ -42,12 +42,13 @@ def set_log(level):
 
 def make_env(args):
     df = unpack_data(args.data_path)[args.begin_date:]
-    name, package = args.env.rsplit('.', 2)
-    cenv = importlib.import_module(name, package=package)
+    name, package = args.env.rsplit('.', 1)
+    lib = importlib.import_module(name)
     env_config = {
         'data': df
     }
-    env = cenv(config=env_config)
+    env = eval(f'lib.{package}')(config=env_config)
+    LOG.debug(env)
     check_env(env)
     return env
 
@@ -57,10 +58,10 @@ def train(args, env):
     if not os.path.exists(tensorboard_log):
         os.makedirs(tensorboard_log)
 
-    algo = importlib.import_module('stable_baselines3', package=args.algo)
+    lib = importlib.import_module('stable_baselines3')
     # from stable_baselines3 import PPO
     # PPO('MlpPolicy', env, verbose=2, tensorboard_log=tensorboard_log)
-    model = algo(args.policy, env, verbose=2, tensorboard_log=tensorboard_log)
+    model = eval(f'lib.{args.algo}')(args.policy, env, verbose=2, tensorboard_log=tensorboard_log)
     LOG.info(model.policy)
 
     begin_time = datetime.now()
@@ -82,6 +83,6 @@ def main():
 
 
 if __name__ == '__main__':
-    # python -m
+    # python train.py
     main()
 
