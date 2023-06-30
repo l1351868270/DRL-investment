@@ -1,5 +1,5 @@
 # Instruction
-This repository is my investment tool base on tongdaxin and deep reinforce learning. The deep learning framework used here is pytorch. The deep reinforce learning algorithm implementation use two ways. One is implemented myself refer to [spingingup](https://github.com/openai/spinningup), the other one is used [rllib](https://github.com/ray-project/ray)
+This repository is my investment tool base on tongdaxin and deep reinforce learning. The deep learning framework used here is pytorch. The deep reinforce learning algorithm implementation use some ways: implemented myself refer to [spingingup](https://github.com/openai/spinningup), [rllib](https://github.com/ray-project/ray), and [sb3](https://stable-baselines3.readthedocs.io/en/master/)
 
 # Install
 ```
