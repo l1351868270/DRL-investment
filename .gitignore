@@ -7,3 +7,6 @@ drl_investment.egg-info/
 
 __pycache__/
 .pytest_cache
+
+_build
+_templates

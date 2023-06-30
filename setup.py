@@ -1,8 +1,13 @@
+import os
 import sys
 from setuptools import setup
 
 
 def main():
+
+    with open('version.txt') as f:
+        __version__ = f.read().strip()
+
     if sys.version_info.major < 3 or sys.version_info.minor < 10:
         print(f'This Python is compatible with Python 3.10 and above, but you are '
               f'running Python {sys.version_info.major}.{sys.version_info.minor}. The installation will likely fail.')
@@ -11,6 +16,9 @@ def main():
         'test': [
             'pytest>=7.3.1',
             'coverage>=7.2.7',
+        ],
+        'docs': [
+            'sphinx>=7.0.1'
         ],
         'tf2': [
             'tensorflow>=2.12.0',
@@ -46,7 +54,7 @@ def main():
         author='lishuliang',
         url='https://github.com/l1351868270/DRL-investment',
         author_email='llishuliang@163.com',
-        version='0.0.1',
+        version=__version__,
     )
 
 
